@@ -1,5 +1,10 @@
 #!/usr/bin/python
 
+# Generates and prints server's environment as HTML report via http(s) in browser.
+# It's usefull wheather we want to check does python works on this CGI environment,
+# or also if we try to inspect this environment's details.
+# Don't forget to set proper permissions for the file.
+
 import cgitb; cgitb.enable()
 import os
 import sys
