@@ -25,7 +25,7 @@ def update():
                 '-m', 'pip', 'install', '-U',
                 *[i['name'] for i in outdated]
                 ]
-            ) or 'No outdated packages found'
+            ).decode() or 'No outdated packages found'
 
 if __name__ == "__main__":
     print (update())
