@@ -1,34 +1,23 @@
-# The recommended way to work with files is to use a 
-# context manager "with" for an open() method.
+# We can read/write just in one line: open(path, 'w').write(str)
+# or var = open(path, 'r').read()
 #
-# But Python also provides us a chain notation.
-# We can write into a file just in one line: open(path, 'w').write(str)
-#
-# But there we have a problem with unclosed i/o stream. We cannot
-# close just written file manually if it don't assigned to variable.
+# But there we have a problem with unclosed I/O stream. We cannot
+# close just written file manually.
 # F.e., see https://bugs.python.org/issue37350
 #
-# The same problem with one-line command to read from file.
-# In var = open(path, 'r').read() "var" is String, so we
-# cannot close the file pointed in path.
-#
-# That's why all manuals force us to use "with" or assign open() to
+# That's why all manuals force us to use "with", or assign open() to
 # temporarly variable for closing it manually.
 #
-# But what with Zen? "Simple is better than complex", "Flat is better than 
-# nested", "Readability counts"...
-#
+# But "Flat is better than nested" and "Readability counts".
 # One-line is simpler, flatter and much readable than any other way.
 #
 # To solve this issue I use a small class for wrapping 
 # standard "open" metod and it's write() and read() methods.
 # It works the same as "open", but controls the file for 
-# it always have to be closed.
+# it always have to be closed after this methods done.
 #
-# The class should not be assigned to variable, 
-# because it closing the file after any method
-# (both read and write) and instance became useless.
-# Use it only for stand-alone single line mode.
+# Usage:
+# from w_open import w_open
 
 class w_open:
     "Wraps open().write() and open().read() for keeping files always closed"
@@ -48,7 +37,7 @@ class w_open:
 
 if __name__ == "__main__":
     print (
-           {True: "File succesfully closed",
+           {True:  "File succesfully closed",
             False: "File was not closed"} \
                 [w_open('test.txt', 'w').write('wow!')]
            )
