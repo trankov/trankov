@@ -10,12 +10,14 @@
 # and returns the result as str.
 # Requires pip (of course).
 
+
 import sys
 import subprocess
 import ast
 
+
 def update():
-    outdated = ast.literal_eval( subprocess.check_output([
+    outdated = ast.literal_eval(subprocess.check_output([
                 sys.executable, 
                 '-m', 'pip', 'list', '-o', 
                 '--format=json']).decode())
@@ -26,6 +28,7 @@ def update():
                 *[i['name'] for i in outdated]
                 ]
             ).decode() or 'No outdated packages found'
+
 
 if __name__ == "__main__":
     print (update())
