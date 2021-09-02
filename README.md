@@ -4,4 +4,4 @@
 
 Just a few repos for my pet projects.
 
-Python, data analyzing, cross-API middleware, routine automation, love.
+Front repo - snippets.
