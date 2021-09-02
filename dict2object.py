@@ -1,20 +1,18 @@
-# Convert JSON structure to the object's __dict__.
-# Just send the JSON string or Python dictionary
-# to get the point-to-point notation
-# instead of using node tree syntax
+# Convert JSON or dict to the object (for using point notation).
 #
 # USAGE:
-# import JSON_sugar
-# sugarcube = JSON_sugar.rafinade(json_string_or_dict)
+# import dict2object
+# sugarcube = dict2object.rafinade(json_string_or_dict)
 # 
 
 import json
 
-def rafinade(json_string):
-    if type(json_string) == dict:
-        json_string = json.dumps(json_string)
+def rafinade(stringordict):
+    
+    if type(stringordict) is dict:
+        stringordict = json.dumps(stringordict)
 
-    class sugar:
+    class Sugar:
         def __init__(self, /, **kwargs):
             self.__dict__.update(kwargs)
             self._root = list(self.__dict__.keys())[0]
@@ -25,7 +23,7 @@ def rafinade(json_string):
         def __eq__(self, other):
             return self.__dict__ == other.__dict__
       
-    return json.loads(json_string, object_hook=lambda d: sugar(**d))
+    return json.loads(stringordict, object_hook=lambda data: Sugar(**data))
 
 
 
