@@ -28,7 +28,29 @@ def rafinade(stringordict):
 
 
 
+# This method is shorter, but lack some features of above
+
+def chainer(name, dict_):
+    ret_val = type(name, (), dict_)
+
+    for prop, value in ret_val.__dict__.items():
+        if (not prop.startswith('__') 
+            and not prop.endswith('__') 
+            and type(value) is dict):
+            setattr(ret_val, prop, chainer(prop, value))
+
+    return ret_val
+
+
+
+
 if __name__ == '__main__':
+
     dict_ = {"User" :{"Name" : "trankov", "ID" : 10, "Gender" : {"ID" : 1}}}
+
     n = rafinade(dict_)
-    print(n.User.Gender._root)
+    print(n, n.User, n.User.Name, n.User.ID, n.User.Gender, n.User.Gender.ID, n.User.Gender.ID._root, n.User.Gender._root, sep='\n')
+    print()
+
+    n = chainer('n', dict_)
+    print(n, n.User, n.User.Name, n.User.ID, n.User.Gender, n.User.Gender.ID, sep='\n')
