@@ -39,6 +39,7 @@ class Avoid:
             return default_value
         return self.value
 
+
     def __truediv__(self, default_value):
         '''Returns default if False'''
         if bool(self.value):
@@ -46,11 +47,23 @@ class Avoid:
         return default_value
 
 
+    def __call__(self, default_value):
+        '''Returns default if not exist'''
+        if self.value in locals():
+            return locals()[self.value]
+        if self.value in globals():
+            return globals()[self.value]
+        return default_value
+
+
 value = 0
 default_value = 2
-
 print( Avoid(value) // default_value )
 print( Avoid(value) /  default_value )
+
+print( Avoid('value')(default_value) )
+print( Avoid('value_')(default_value) )
+
 
 
 # So, it could be written as:
