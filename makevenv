@@ -1,0 +1,102 @@
+#!/opt/homebrew/opt/python@3.10/bin/python3
+
+# Installation:
+# cp makevenv ~/bin/makevenv
+# chmod -x ~/bin/makevenv
+
+# Set actual shebang (makevenv directory have to be in PATH):
+# head -n1 $(which makevenv) && echo "$(tail -n +2 $(which makevenv))" > $(which makevenv) &> /dev/null; echo '#''!'$(which python3) | cat - $(which makevenv) | tee $(which makevenv) &> /dev/null
+
+
+import sys
+import venv
+from pathlib import Path
+
+
+if len(sys.argv) != 2:
+    print(f'Usage: ~/{Path(__file__).name} [venv_name]')
+    sys.exit(1488)
+
+
+BASE_DIR = Path('.').resolve()
+VENV_DIR = BASE_DIR / sys.argv[1]
+
+
+if (BASE_DIR / sys.argv[1]).exists() and (BASE_DIR / sys.argv[1]).is_dir():
+    print(f'Directory "{BASE_DIR / sys.argv[1]}" already exists.')
+    sys.exit(1488)
+
+
+# Functions
+
+def create_venv():
+    """
+    Creates virtual environment and updates pip
+
+    """
+    print('\n\nCreating virtual environment...\n')
+    venv.create(BASE_DIR / sys.argv[1], with_pip=True, upgrade_deps=True)
+    print('\n\nVirtual environment created.\n')
+
+
+def create_vscode_directory():
+    """
+    Creating VSCode directory and settings.json with proper pythonPath variables
+
+    """
+    if input(
+            f'Do you want to create {VENV_DIR}/.vscode/settings.json? (y/n) '
+        ).lower() not in {'y', 'yes'}:
+        return
+    Path.mkdir(VENV_DIR/'.vscode')
+    with open(VENV_DIR/'.vscode' / 'settings.json', 'w') as f:
+        f.write(
+          '{\n\t"python.pythonPath": "${workspaceFolder}/bin/python",\n\t'
+          '"python.defaultInterpreterPath": "${workspaceFolder}/bin/python"\n}'
+        )
+    print (f'{VENV_DIR}/.vscode/settings.json has been created.\n')
+
+
+def create_gitignore():
+    """
+    Creates .gitignore file and fill it with the contents of the
+    virtual environment directory
+
+    """
+    if input(
+            'Do you want to create .gitignore with all directory items? (y/n) '
+        ).lower() not in {'y', 'yes'}:
+        return
+    (gitignore := open(VENV_DIR/'.gitignore', 'w')).writelines({i.name + '\n' for i in Path().iterdir()})
+    gitignore.closed or gitignore.close()
+    print (f'{VENV_DIR}/.gitignore has been created and formed.\n')
+
+
+def print_resume():
+    """
+    Prints information about possible further actions
+
+    """
+    print('\nProcess complete. You may copy/paste strings below...\n\n')
+    print('  source', VENV_DIR / 'bin' / 'activate')
+    print('  cd', VENV_DIR)
+    print('  ls -lhGF', VENV_DIR)
+    print('  code', VENV_DIR)
+
+
+# Run
+
+def run():
+    """
+    Starts process of virtual environment creation
+
+    """
+    create_venv()
+    create_vscode_directory()
+    create_gitignore()
+    print_resume()
+
+
+if __name__ == '__main__':
+    run()
+    sys.exit(0)
