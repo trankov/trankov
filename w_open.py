@@ -1,3 +1,14 @@
+# UPDATE
+# After Python 3.9 with walrus operator we able to use muc simpler synthax:
+
+(f := open(filename, 'w')).write(something)
+f.closed or f.close()
+
+# All follows written before this invention and not actual anymore.
+
+
+
+
 # We can read/write files just in one line: 
 #
 # >>> open(path, 'w').write(string)
