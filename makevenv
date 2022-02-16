@@ -7,6 +7,12 @@
 # Set actual shebang (makevenv directory have to be in PATH):
 # head -n1 $(which makevenv) && echo "$(tail -n +2 $(which makevenv))" > $(which makevenv) &> /dev/null; echo '#''!'$(which python3) | cat - $(which makevenv) | tee $(which makevenv) &> /dev/null
 
+CYAN = "\033[0;96m"
+GREEN = "\033[0;92m"
+PURPLE = "\033[0;95m"
+YELLOW = "\033[0;93m"
+RESET = "\033[0m"
+
 
 import sys
 import venv
@@ -23,7 +29,7 @@ VENV_DIR = BASE_DIR / sys.argv[1]
 
 
 if (BASE_DIR / sys.argv[1]).exists() and (BASE_DIR / sys.argv[1]).is_dir():
-    print(f'Directory "{BASE_DIR / sys.argv[1]}" already exists.')
+    print(f'{PURPLE}Directory {RESET}"{BASE_DIR / sys.argv[1]}"{PURPLE} already exists.{RESET}')
     sys.exit(1488)
 
 
@@ -34,9 +40,9 @@ def create_venv():
     Creates virtual environment and updates pip
 
     """
-    print('\n\nCreating virtual environment...\n')
+    print(f'\n\n{YELLOW}Creating virtual environment...\n{PURPLE}')
     venv.create(BASE_DIR / sys.argv[1], with_pip=True, upgrade_deps=True)
-    print('\n\nVirtual environment created.\n')
+    print(f'\n\n{YELLOW}Virtual environment created.{RESET}\n')
 
 
 def create_vscode_directory():
@@ -45,7 +51,7 @@ def create_vscode_directory():
 
     """
     if input(
-            f'Do you want to create {VENV_DIR}/.vscode/settings.json? (y/n) '
+            f'Do you want to create {VENV_DIR}/.vscode/{GREEN}settings.json{RESET}? (y/n) '
         ).lower() not in {'y', 'yes'}:
         return
     Path.mkdir(VENV_DIR/'.vscode')
@@ -54,7 +60,7 @@ def create_vscode_directory():
           '{\n\t"python.pythonPath": "${workspaceFolder}/bin/python",\n\t'
           '"python.defaultInterpreterPath": "${workspaceFolder}/bin/python"\n}'
         )
-    print (f'{VENV_DIR}/.vscode/settings.json has been created.\n')
+    print (f'{VENV_DIR}/.vscode/{GREEN}settings.json{RESET} has been created.\n')
 
 
 def create_gitignore():
@@ -64,12 +70,12 @@ def create_gitignore():
 
     """
     if input(
-            'Do you want to create .gitignore with all directory items? (y/n) '
+            f'Do you want to create {GREEN}.gitignore{RESET} with all directory items? (y/n) '
         ).lower() not in {'y', 'yes'}:
         return
-    (gitignore := open(VENV_DIR/'.gitignore', 'w')).writelines({i.name + '\n' for i in Path().iterdir()})
+    (gitignore := open(VENV_DIR/'.gitignore', 'w')).writelines({i.name + '\n' for i in VENV_DIR.iterdir()})
     gitignore.closed or gitignore.close()
-    print (f'{VENV_DIR}/.gitignore has been created and formed.\n')
+    print (f'{VENV_DIR}/{GREEN}.gitignore{RESET} has been created and formed.\n')
 
 
 def print_resume():
@@ -77,11 +83,11 @@ def print_resume():
     Prints information about possible further actions
 
     """
-    print('\nProcess complete. You may copy/paste strings below...\n\n')
-    print('  source', VENV_DIR / 'bin' / 'activate')
-    print('  cd', VENV_DIR)
-    print('  ls -lhGF', VENV_DIR)
-    print('  code', VENV_DIR)
+    print(f'\n{CYAN}Process complete. You may copy/paste strings below...{RESET}\n')
+    print(f'  {GREEN}source{RESET}', VENV_DIR / 'bin' / 'activate')
+    print(f'  {GREEN}cd{RESET}', VENV_DIR)
+    print(f'  {GREEN}ls\033[0;32m -lhGF{RESET}', VENV_DIR)
+    print(f'  {GREEN}code{RESET}', VENV_DIR)
 
 
 # Run
