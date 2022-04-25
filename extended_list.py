@@ -7,7 +7,7 @@
 # n @ str == ['1', '2', '3']
 
 # n = extlist('abcde')
-# n = ['a', 'b', 'c', 'd', 'e']
+# n == ['a', 'b', 'c', 'd', 'e']
 # n @ str.upper == ['A', 'B', 'C', 'D', 'E']
 
 # Does not transform object itself. Just returns new list.
