@@ -1,17 +1,15 @@
-# Imagine we have file /Path/to/my_settings.cfg which contains:
-# {
-#     'name': 'admin',
-#     'password': '123'
-# }
-
-class ExternalConfig:
-    '''```
+"""
+Let we have file /Path/to/my_settings.cfg which contains:
+{
+    'name': 'admin',
+    'password': '123'
+}
 
     >>> import ExternalConfig
     >>> myconfig = ExternalConfig(settings_file='/Path/to/my_settings.cfg')
 
     >>> myconfig.settings_file
-    PosixPath('/Path/to/my_settings.cfg') # or WindowsPath('C:\Path\to\my_settings.cfg')
+    PosixPath('/Path/to/my_settings.cfg') # or WindowsPath('C:\\Path\\to\\my_settings.cfg')
 
     >>> myconfig.settings
     {'name': 'admin', 'password': '123'}
@@ -22,8 +20,14 @@ class ExternalConfig:
     >>> myconfig.settings['password']
     '123'
 
-    ```'''
+"""
 
+import ast
+
+from pathlib import Path, PosixPath, WindowsPath
+
+
+class ExternalConfig:
     settings_file: Path = Path.cwd()/'settings.py'
     settings: dict = {}
     __PATH_TYPES = (PosixPath, WindowsPath, Path)
