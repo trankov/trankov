@@ -74,6 +74,9 @@ class ManagerPlus(models.Manager):
         except ObjectDoesNotExist:
             return None
 
+    def random(self):
+        return self.order_by("?").first()
+
 
 class ModelPlus(models.Model):
 
