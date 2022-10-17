@@ -2,8 +2,12 @@
 The main reason why Python's dict doesn't support dot notation is because
 class attribute name is always string, not hashable object.
 
+The other caveat is that the <dict> class has a methods and properties
+which we can see from dir(dict), and they are also regular strings. It means
+they can't be converted to Mapping keys.
+
 So, this implementation provides a limited usage of dict, guess all keys must
-be strings only.
+be strings only and must be not the same as methods/properties.
 
     >>> d = {"a": 1, "b": 2}
     >>> dot_dict = DotDict({"c": 3, "d": 4, "e": d})
@@ -11,6 +15,11 @@ be strings only.
     >>> dot_dict.c      # 3
     >>> dot_dict.e      # {'a': 1, 'b': 2}
     >>> dot_dict.e.a    # 1
+
+Square parenthises notation is also works as usual.
+
+    >>> dot_dict.e["b"]     # 2
+    >>> dot_dict["e"].a     # 1
 
 """
 
