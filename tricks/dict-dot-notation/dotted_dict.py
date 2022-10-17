@@ -30,6 +30,8 @@ class DotDict(dict):
         for key, value in self.items():
             if not isinstance(key, str):
                 raise TypeError(f"Attributes must be strings, not {type(key)} as {key}")
+            if key in dir(dict):
+                raise KeyError(f"Attribute '{key}' is reserved as a <class dict> property or method")
             if isinstance(value, dict):
                 self[key] = DotDict(value)
 
