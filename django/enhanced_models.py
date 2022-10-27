@@ -1,7 +1,7 @@
 """
 ManagerPlus:
 
-    Don't raising error if MyModel.DoesNotExists exception and returns None
+    Don't raising error on MyModel.DoesNotExists exception and returns None
     >>> MyModel.objects.get_or_none(pk=100)
 
 
@@ -36,10 +36,23 @@ Example:
 
 """
 
+import os
+
 from itertools import chain
 
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from django.db import models
+
+from django.db import connection, models
+
+
+def get_env_username():
+    "Returns username connected to DB server in OS environment"
+    return os.getlogin()
+
+
+def get_db_username():
+    "Returns username for connection session in DB server environment"
+    return connection._connections.settings[connection._alias]["USER"]
 
 
 class ManagerPlus(models.Manager):
@@ -98,6 +111,16 @@ class ModelPlus(models.Model):
 class ModelStat(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    created_env_uname = models.CharField(
+        verbose_name="OS User",
+        max_length=32,
+        default=get_env_username,
+    )
+    created_db_uname = models.CharField(
+        verbose_name="DB User",
+        max_length=32,
+        default=get_db_username,
+    )
 
     class Meta:
         abstract = True
