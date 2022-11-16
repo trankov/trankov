@@ -91,6 +91,7 @@ class CastDecimal(Decimal):
         if isinstance(value, (int, float)):
             return Decimal(str(value))
         if isinstance(value, str):
+            value = value.replace(",", ".")
             if not value.replace(".", "", 1).isdigit():
                 raise ValueError(f"Cannot convert {value!r} to valid number")
             return Decimal(value)

@@ -29,4 +29,4 @@ if __name__ == '__main__':
 
 
     payment.currency = "GB"         # Value Error
-    payment.currency = "22,100.45"  # Type Error
+    payment.amount = "22,100.45"  # Type Error
