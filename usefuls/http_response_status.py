@@ -2,7 +2,7 @@ import json
 from http import HTTPStatus
 
 
-class HttpResponceStatus:
+class HttpResponseStatus:
 
     code: int
     phrase: str
@@ -62,18 +62,32 @@ class HttpResponceStatus:
     def json(self):
         return json.dumps(self.dict)
 
-    @property
-    def django(self):
+    def django(self, *args, **kwargs):
         try:
-            from django.http import HttpResponse
+            import django.http
         except ImportError as err:
             raise RuntimeError("Django not installed") from err
-        return type(
-            f"HttpResponse{self.code}",
-            (HttpResponse,),
-            {
-                "status_code": self.code,
-                "phrase": self.phrase,
-                "description": self.description,
-            },
-        )()
+        return {
+            301: django.http.HttpResponsePermanentRedirect,
+            302: django.http.HttpResponseRedirect,
+            304: django.http.HttpResponseNotModified,
+            400: django.http.HttpResponseBadRequest,
+            403: django.http.HttpResponseForbidden,
+            404: django.http.HttpResponseNotFound,
+            405: django.http.HttpResponseNotAllowed,
+            410: django.http.HttpResponseGone,
+            500: django.http.HttpResponseServerError,
+        }.get(
+            self.code,
+            type(
+                f"HttpResponse{self.phrase.title().replace(' ', '').replace('-', '')}",
+                (django.http.HttpResponse,),
+                {
+                    "status_code": self.code,
+                    "phrase": self.phrase,
+                    "description": self.description,
+                },
+            ),
+        )(
+            *args, **kwargs
+        )
