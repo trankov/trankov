@@ -7,8 +7,8 @@ ManagerPlus:
 
     Aviods DoesNotExists or MultipleObjectsReturned exceptions,
     returns first/last object or None
-    >>> MyModel.objects.none_of_first(username="Tahiro")
-    >>> MyModel.objects.none_of_last(username="Motoyuki")
+    >>> MyModel.objects.none_or_first(username="Tahiro")
+    >>> MyModel.objects.none_or_last(username="Motoyuki")
 
 
     Checks is at least one object exists, then returns True or False
@@ -39,6 +39,7 @@ Example:
 import os
 
 from itertools import chain
+from typing import Any, Sequence
 
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
@@ -95,14 +96,46 @@ class ModelPlus(models.Model):
 
     objects = ManagerPlus()
 
-    def to_dict(self, fields=None):
+    @property
+    def _allfields(self):
+        """Iterable with all fields in the model"""
+        return chain(
+                getattr(self._meta, "concrete_fields", []),
+                self._meta.private_fields,
+            )
+
+    def to_dict(self, fields: Sequence | None = None) -> dict[str, Any]:
+        """
+        Returns model object as a dictionary. If `fields` is specified,
+        returns a precised fields only.
+
+        Unexistent fields are ignored with no exception raise.
+        """
         return {
             field.name: field.value_from_object(self)
-            for field in chain(
-                getattr(self._meta, "concrete_fields", []), self._meta.private_fields  # type: ignore
-            )
-            if fields is None or field in fields
+            for field in self._allfields if fields is None or field in fields
         }
+
+    def update_fields(self, skip_extra: bool = True, **kwargs):
+        """
+        Updates and saves instance according to `kwargs`.
+
+        If `skip_extra` is `True`, fields not in model are skpipped,
+        otherwise AttributeError will raise.
+        """
+        fieldnames = {i.name for i in self._allfields}
+        kwnames = set(kwargs.keys())
+        if not kwnames.issubset(fieldnames) and not skip_extra:
+            raise AttributeError(
+                f'Wrong field(s) {", ".join(kwnames.difference(fieldnames))}'
+            )
+        fields2update = ()
+        for k, v in kwargs.items():
+            if k in fieldnames:
+                setattr(self, k, v)
+                fields2update += (k,)
+        self.save(update_fields=fields2update)
+        return self
 
     class Meta:
         abstract = True

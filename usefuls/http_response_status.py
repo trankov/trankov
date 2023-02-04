@@ -1,3 +1,10 @@
+"""
+HTTP Response objects with predefined status codes.
+
+>>> HttpResponseStatus(210).django()
+
+"""
+
 import json
 from http import HTTPStatus
 
