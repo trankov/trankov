@@ -11,6 +11,9 @@ is None.
 >>>         "address": GetAttr(request.user.json_data).from_keys("info", "geo", "address")
 >>>     }
 
+For awaitables:
+
+>>> phone = await GetAttrAsync.from_str(request.user, "contacts.phone_number")
 """
 
 from typing import Any, Mapping
@@ -29,10 +32,10 @@ class GetAttr:
         props = (first_prop, *other_props)
         return self._iter_args(props)
 
-    def _iter_args(self, arg0):
+    def _iter_args(self, arg_sequence):
         result = self.obj
-        for chainlink in arg0:
-            result = getattr(result, chainlink, None)
+        for arg in arg_sequence:
+            result = getattr(result, arg, None)
             if result is None:
                 return None
         return result
@@ -46,3 +49,27 @@ class GetAttr:
             if not isinstance(dictionary, Mapping):
                 return dictionary
         return dictionary
+
+
+class GetAttrAsync:
+
+    @classmethod
+    async def from_str(cls, obj: object, attr_string: str) -> Any | None:
+        _self = cls()
+        await _self._init(obj)
+        return _self._getattr.from_str(attr_string)
+
+    @classmethod
+    async def from_args(cls, obj: object, first_prop: str, *other_props) -> Any | None:
+        _self = cls()
+        await _self._init(obj)
+        return _self._getattr.from_args(obj, first_prop, *other_props)
+
+    @classmethod
+    async def from_keys(cls, obj: object, **keys) -> Any | None:
+        _self = cls()
+        await _self._init(obj)
+        return _self._getattr.from_keys(**keys)
+
+    async def _init(self, obj):
+        self._getattr = GetAttr(obj)
