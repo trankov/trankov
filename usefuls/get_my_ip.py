@@ -26,10 +26,13 @@ def get_my_ip(ip_providers: tuple[str, ...] | None = None):
 
     ip_got = ''
     providers = iter(ip_providers)
+    _sentinel = object()
 
     while not ip_got:
-        provider = next(providers)
-        ip_got = read_http(provider)
+        provider = next(providers, _sentinel)
+        if provider is _sentinel:
+            raise StopIteration('No more provider available')
+        ip_got = read_http(str(provider))
 
     return ip_got
 

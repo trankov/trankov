@@ -1,5 +1,6 @@
 import math
-from typing import Self, Sequence
+from collections.abc import Sequence
+from typing import Self
 
 
 class Pager:
