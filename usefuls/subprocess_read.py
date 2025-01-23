@@ -102,6 +102,16 @@ class PipeReader:
         finally:
             self.process.terminate()
 
+    def __enter__(self) -> Self:
+        self.popen()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        try:
+            return None
+        finally:
+            self.process.terminate()
+
 
 if __name__ == '__main__':
     print_ping = PipeReader(['ping', 'google.com', '-c', '5'], print)
