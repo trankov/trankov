@@ -31,6 +31,13 @@ class PipeReader:
         print(pipe.stdout, end='')
     pipe.process.terminate()
     ```
+
+    Or, using context manager:
+    ```
+    with PipeReader(command=['ping', 'google.com', '-c', '3']) as pipe:
+        while pipe.running:
+            print(pipe.stdout, end='')
+    ```
     """
 
     command: Sequence[str]
@@ -47,7 +54,7 @@ class PipeReader:
 
     def popen(self) -> Self:
         """Start a new process"""
-        self._process = subprocess.Popen(
+        self._process = subprocess.Popen(  # pylint disable=R1732
             self.command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
