@@ -84,7 +84,7 @@ class TransitionRuleAdapter:
                 self._convert_to_valid_type(state) for state in self.target_states
             ]
             if self.target_states not in (None, [...])
-            else self.target_states,
+            else self.target_states
         )
 
 
