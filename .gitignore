@@ -1,1 +1,9 @@
 .DS_Store
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+*.ipynb
+*.ipynb_checkpoints
